@@ -4,7 +4,8 @@
 # 3. A run function that takes a tradingstate as input and outputs a "result" dict.
 
 from typing import Dict, List
-from datamodel import OrderDepth, TradingState, Order
+from datamodel import OrderDepth, TradingState, Order, Trade
+import numpy as np
 
 class Trader:
 
@@ -20,10 +21,13 @@ class Trader:
             if product == 'PEARLS':
                 order_depth : OrderDepth = state.order_depths[product]
                 orders : List[Order] = []
-                
+                market_trades : Trade = state.market_trades[product]
                 # a fair value for pearls, calculate this afterwords
-                acceptable_price = 1
-                
+                # acceptable_price = 1
+                acceptable_price = fair_value(market_trades)
+                print(f"AVERAGE: {acceptable_price}")
+                print(f"SELL ORDERS: {order_depth.sell_orders.keys()}")
+                print(f"BUY ORDERS: {order_depth.buy_orders.keys()}")
                 if len(order_depth.sell_orders) >0 :
                     best_ask = min(order_depth.sell_orders.keys())
                     best_ask_volume = order_depth.sell_orders[best_ask]
@@ -44,4 +48,8 @@ class Trader:
 
 
         return result
-    
+
+
+def fair_value(market_trades):
+    prices = [trade.price for trade in market_trades]
+    return np.average(prices)
