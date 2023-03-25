@@ -7,6 +7,9 @@ from typing import Dict, List
 from datamodel import OrderDepth, TradingState, Order, Trade
 import numpy as np
 
+expenditure = 0
+gained = 0
+
 class Trader:
 
     def run(self, state: TradingState) -> Dict[str, List[Order]]:
@@ -16,7 +19,7 @@ class Trader:
         """
         result = {}
         
-
+        print(state.toJSON())
         for product in state.order_depths.keys():
             if product == 'PEARLS':
                 order_depth : OrderDepth = state.order_depths[product]
@@ -25,9 +28,6 @@ class Trader:
                 # a fair value for pearls, calculate this afterwords
                 # acceptable_price = 1
                 acceptable_price = fair_value(market_trades)
-                print(f"AVERAGE: {acceptable_price}")
-                print(f"SELL ORDERS: {order_depth.sell_orders.keys()}")
-                print(f"BUY ORDERS: {order_depth.buy_orders.keys()}")
                 if len(order_depth.sell_orders) >0 :
                     best_ask = min(order_depth.sell_orders.keys())
                     best_ask_volume = order_depth.sell_orders[best_ask]
@@ -45,7 +45,6 @@ class Trader:
                         orders.append(Order(product, best_bid, -best_bid_volume))
 
                 result[product] = orders
-
 
         return result
 
